@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Chat;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
@@ -14,25 +15,16 @@ class ChatController extends Controller
     public function index()
     {
         // return Chat::all();
+        $chats = Auth::user()->chats()->latest()->get();
         return Inertia::render("Chats/Index", [
-            "chats" => Chat::all()
+            "chats" => $chats
         ]);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return Inertia::render("Chats/Create");
-    }
-
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //dd($request->user());
         $validated = $request->validate([
             'title' => 'required'
         ]);
@@ -47,9 +39,14 @@ class ChatController extends Controller
      */
     public function show($id)
     {
-        $chat = Chat::with('messages')->find($id);
-        return Inertia::render("Chats/Show", [
-            "chat" => $chat
+        $chats = Auth::user()->chats()->latest()->get();
+        $chat = Chat::find($id);
+        $messages = $chat->messages()->latest()->get();
+        // return $messages;
+        return Inertia::render("Chats/ChatShow", [
+            "chats" => $chats,
+            "chat" => $chat,
+            "messages" => $messages
         ]);
     }
 

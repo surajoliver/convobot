@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -31,5 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('messages', MessageController::class)->only('store');
 
 });
+
+// Route::resource('login', ChatSessionController::class)->only(['create', 'store', 'destroy']);
+
 
 require __DIR__.'/auth.php';

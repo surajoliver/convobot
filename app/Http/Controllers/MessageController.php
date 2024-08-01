@@ -17,12 +17,11 @@ class MessageController extends Controller
 
 
 
-        foreach($chat->messages()->get() as $message) {
+        foreach($chat->messages()->latest()->get() as $message) {
             array_push($messages, [
                 "role" => strtolower($message->requestor),
                 "content" => $message->body
             ]);
-            
         }
 
         array_push($messages, [
@@ -30,7 +29,7 @@ class MessageController extends Controller
             "content" => $chat->title
         ]);
 
-
+        
         // added code to test
         $prompt       = $chat->title;
 
@@ -38,6 +37,8 @@ class MessageController extends Controller
                 'model'    => 'gpt-3.5-turbo',
                 'messages' => array_reverse($messages),
         ];
+
+        //dd($data);
 
         //dd($data);
 
@@ -61,11 +62,12 @@ class MessageController extends Controller
 
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'body' => 'required',
             'requestor' => 'required'
         ]);
+        //$validated['requestor'] = 'User';
+        //dd($validated);
         $chat_id = $request['chat_id'];
         $chat = Chat::find($chat_id);
         $chat->messages()->create($validated);
